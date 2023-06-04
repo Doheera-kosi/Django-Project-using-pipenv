@@ -8,7 +8,7 @@ from .serializers import MenuItemSerializer
 # Create your views here.
 @api_view()
 def menu_items(request):
-    items = MenuItem.objects.all()
+    items = MenuItem.objects.select_related('category').all()
     serialized_item = MenuItemSerializer(items, many=True)
     return Response(serialized_item.data)
 
@@ -20,4 +20,3 @@ def single_item(request, id):
         return Response(serialized_item.data)
     except MenuItem.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
