@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import MenuItem
 from rest_framework import generics, status
+from .models import MenuItem
 from .serializers import MenuItemSerializer
 
 # Create your views here.
@@ -15,7 +15,7 @@ def menu_items(request):
 @api_view(['GET'])
 def single_item(request, id):
     try:
-        item = MenuItem.objects.get(id=id)
+        item = get_object_or_404(MenuItem,pk=id)
         serialized_item = MenuItemSerializer(item)
         return Response(serialized_item.data)
     except MenuItem.DoesNotExist:
