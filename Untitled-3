@@ -7,3 +7,5 @@ http://127.0.0.1:8000/api/menu-items/?to_price=3
 http://127.0.0.1:8000/api/menu-items/?to_price=3&category=main
 
 http://127.0.0.1:8000/api/menu-items/?search=chocolate
+
+http://127.0.0.1:8000/api/menu-items?ordering=price,inventory
