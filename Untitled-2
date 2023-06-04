@@ -1,0 +1,3 @@
+'rest_framework.renderers.JSONRenderer'
+
+rest_framework.renderers.BrowserbleAPIRenderer',
