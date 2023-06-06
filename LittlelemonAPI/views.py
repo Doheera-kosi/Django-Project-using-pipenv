@@ -63,5 +63,6 @@ def single_item(request, id):
 
 # CREATING A PROTECTED API ENDPOINT
 @api_view()
+@permission_classes([IsAuthenticated])
 def secret(request):
   return Response({"message":"Some secret message"})
