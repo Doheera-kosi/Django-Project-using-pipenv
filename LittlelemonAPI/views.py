@@ -7,6 +7,10 @@ from .serializers import MenuItemSerializer
 from decimal import Decimal
 from django.core.paginator import Paginator, EmptyPage
 
+# Protecting for only token verify users
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+
 # Create your views here.
 @api_view(['GET', 'POST'])
 def menu_items(request):
@@ -56,3 +60,8 @@ def single_item(request, id):
         return Response(serialized_item.data)
     except MenuItem.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+# CREATING A PROTECTED API ENDPOINT
+@api_view()
+def secret(request):
+  return Response({"message":"Some secret message"})
