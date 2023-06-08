@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, throttle_classes
 from rest_framework import generics, status
 from .models import MenuItem
 from .serializers import MenuItemSerializer
@@ -10,6 +10,8 @@ from django.core.paginator import Paginator, EmptyPage
 # Protecting for only token verify users
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+
+from rest_framework.throttling import UserRateThrottle
 
 # Create your views here.
 @api_view(['GET', 'POST'])
@@ -66,3 +68,57 @@ def single_item(request, id):
 @permission_classes([IsAuthenticated])
 def secret(request):
   return Response({"message":"Some secret message"})
+
+
+# Authenticating Unauthorized Access
+@api_view()
+@permission_classes([IsAuthenticated])
+def manager_view(request):
+  if request.user.groups.filter(name='Manager').exists():
+    return Response({"message": "Only Manager Should See This"})
+  else:
+    return Response({"message": "You are not authorized"}, 403)
+  
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+    user = request.user
+    # Serialize the user data as needed
+    serialized_user = {
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        # Add other user fields you want to include
+    }
+    return Response(serialized_user)
+  
+  
+
+@api_view(['GET'])
+@throttle_classes([UserRateThrottle])
+def throttle_check(request):
+    # Get the current user
+    user = request.user
+    if request.user_throttle.should_be_throttled(request):
+        return Response({'message': 'Rate limit exceeded'}, status=429)
+
+    return Response({'message': 'Throttle Check'})
+
+
+
+@api_view(['GET'])
+@throttle_classes([UserRateThrottle])
+@permission_classes([IsAuthenticated])
+def throttle_check_auth(request):
+    
+
+    return Response({'message': 'Throttle check successful'})
+
+
+@api_view(['GET'])
+def roles(request):
+    
+
+    return Response({'message': 'Roles view'})
