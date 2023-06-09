@@ -81,44 +81,40 @@ def manager_view(request):
   
 
 
-@api_view(['GET'])
+@api_view()
 @permission_classes([IsAuthenticated])
 def me(request):
-    user = request.user
-    # Serialize the user data as needed
-    serialized_user = {
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-        # Add other user fields you want to include
-    }
-    return Response(serialized_user)
+    # user = request.user
+    # # Serialize the user data as needed
+    # serialized_user = {
+    #     'id': user.id,
+    #     'username': user.username,
+    #     'email': user.email,
+    #     # Add other user fields you want to include
+    # }
+    return Response(request.user.email)
   
   
 
-@api_view(['GET'])
+@api_view()
 @throttle_classes([UserRateThrottle])
 def throttle_check(request):
     # Get the current user
     user = request.user
     if request.user_throttle.should_be_throttled(request):
         return Response({'message': 'Rate limit exceeded'}, status=429)
+    else:
+      return Response({'message': 'Throttle Check'})
 
-    return Response({'message': 'Throttle Check'})
 
 
-
-@api_view(['GET'])
+@api_view()
 @throttle_classes([UserRateThrottle])
 @permission_classes([IsAuthenticated])
 def throttle_check_auth(request):
-    
-
-    return Response({'message': 'Throttle check successful'})
+    return Response({'message': 'message for the logged in users only'})
 
 
-@api_view(['GET'])
+@api_view()
 def roles(request):
-    
-
     return Response({'message': 'Roles view'})
