@@ -11,7 +11,9 @@ from django.core.paginator import Paginator, EmptyPage
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 
-from rest_framework.throttling import UserRateThrottle
+from rest_framework.exceptions import NotFound
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from .throttles import TenCallsPerMinute
 
 # Create your views here.
 @api_view(['GET', 'POST'])
@@ -37,12 +39,12 @@ def menu_items(request):
       if ordering:
         ordering_fields = ordering.split(",")
         items = items.order_by(*ordering_fields)
-        
-      paginator = Paginator(items,per_page=perpage)
+          
+      paginator = Paginator(items, per_page=perpage)
       try:
-        items = paginator.page(number=page)
-      except EmptyPage:
-        items = []
+          items = paginator.page(number=page)
+      except EmptyPage as e:
+          raise NotFound("Page not found") from e
         
       serialized_item = MenuItemSerializer(items, many=True)
       return Response(serialized_item.data)
@@ -96,21 +98,19 @@ def me(request):
   
   
 
+from rest_framework.throttling import UserRateThrottle
+
 @api_view()
-@throttle_classes([UserRateThrottle])
+@throttle_classes([AnonRateThrottle])
 def throttle_check(request):
-    # Get the current user
-    user = request.user
-    if request.user_throttle.should_be_throttled(request):
-        return Response({'message': 'Rate limit exceeded'}, status=429)
-    else:
-      return Response({'message': 'Throttle Check'})
+    return Response({'message': 'Throttle Check Successfully'})
+
 
 
 
 @api_view()
-@throttle_classes([UserRateThrottle])
 @permission_classes([IsAuthenticated])
+@throttle_classes([TenCallsPerMinute])
 def throttle_check_auth(request):
     return Response({'message': 'message for the logged in users only'})
 
