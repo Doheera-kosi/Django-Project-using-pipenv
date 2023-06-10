@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from rest_framework_xml.renderers import XMLRenderer
+from datetime import timedelta
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'LittlelemonAPI',
     'djoser',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +138,7 @@ REST_FRAMEWORK = {
         'rest_framework_xml.renderers.XMLRenderer'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simple.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -147,4 +151,8 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'USER_ID_FIELD': 'username'
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
 }
