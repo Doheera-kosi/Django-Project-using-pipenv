@@ -1,0 +1,16 @@
+# FEW ENDPOINTS DJOSER HANDLES
+
+/users/
+/users/me/
+/users/confirm/
+/users/resend_activation/
+/users/set_password/
+/users/reset_password/
+/users/reset_password_confirm/
+/users/set_username/
+/users/reset_username/
+/users/reset_username_confirm/
+/token/login/
+/token/logout/
+
+http://127.0.0.1:8000/auth
